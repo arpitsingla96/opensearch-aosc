@@ -1,0 +1,40 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Aggregator root build for the AOSC plugin family.
+ * Real build logic lives in each subproject's build.gradle.
+ */
+
+buildscript {
+    ext {
+        opensearch_version = System.getProperty("opensearch.version") ?: System.getenv("OPENSEARCH_VERSION")
+    }
+    if (!opensearch_version) {
+        throw new GradleException(
+            "opensearch.version is required. Either:\n" +
+            "  export OPENSEARCH_VERSION=2.19.0           (shell profile)\n" +
+            "  -Dopensearch.version=2.19.0                (per-invocation)\n" +
+            "\n" +
+            "For IntelliJ setup, see 'IntelliJ IDEA Setup' section in README.md"
+        )
+    }
+
+    repositories {
+        mavenLocal()
+        maven { url "https://aws.oss.sonatype.org/content/repositories/snapshots" }
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+
+    dependencies {
+        classpath "org.opensearch.gradle:build-tools:${opensearch_version}"
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:6.25.0"
+    }
+}
+
+def aoscVersionProperties = new Properties()
+file("version.properties").withInputStream { aoscVersionProperties.load(it) }
+
+allprojects {
+    version = aoscVersionProperties.getProperty("aosc.version")
+}

@@ -1,0 +1,22 @@
+name: Documentation issue
+description: Report stale, missing, or unclear documentation.
+title: "[Docs]: "
+labels: ["documentation"]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page or section
+      placeholder: docs/how-to/install-the-plugin.md
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: What is wrong or missing?
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: Suggested correction

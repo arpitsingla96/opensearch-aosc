@@ -1,0 +1,58 @@
+name: Bug report
+description: Report incorrect behavior in AOSC.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a problem. Please include enough detail for maintainers to reproduce or reason about the issue.
+  - type: input
+    id: aosc-version
+    attributes:
+      label: AOSC version
+      description: GitHub release tag, commit, or local build version.
+      placeholder: aosc-0.1.0-os2
+    validations:
+      required: true
+  - type: input
+    id: opensearch-version
+    attributes:
+      label: OpenSearch version
+      placeholder: 2.19.0
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the behavior and the impact.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Include index settings/mappings, request bodies, and commands where possible.
+      placeholder: |
+        1. Create source index ...
+        2. Create target index ...
+        3. Start migration with ...
+        4. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs or status output
+      render: text
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context

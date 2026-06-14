@@ -1,0 +1,28 @@
+name: Feature request
+description: Suggest an improvement or new capability.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What are you trying to accomplish?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the behavior, API, or documentation change you would like.
+    validations:
+      required: true
+  - type: input
+    id: opensearch-version
+    attributes:
+      label: Relevant OpenSearch version or branch
+      placeholder: 2.x, 3.x, 2.19.0
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
