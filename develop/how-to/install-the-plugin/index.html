@@ -522,6 +522,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#install-from-github-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Install from GitHub Release
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#install-on-each-node" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -795,6 +806,8 @@
       
         
       
+        
+      
     
     
     
@@ -1015,6 +1028,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#install-from-github-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Install from GitHub Release
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#install-on-each-node" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1112,7 +1136,7 @@
 
 
   
-    <a href="https://github.com/atlassian-labs/opensearch-aosc/edit/main/docs/how-to/install-the-plugin.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/atlassian-labs/opensearch-aosc/edit/develop/docs/how-to/install-the-plugin.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z"/></svg>
     </a>
@@ -1129,7 +1153,7 @@
 <li>OpenSearch <code>2.17.0</code></li>
 <li>OpenSearch <code>2.19.0</code></li>
 </ul>
-<p>Patch releases within the same minor may be compatible because the plugin descriptor is rewritten to a <code>~X.Y.Z</code> semver range. Test the exact OpenSearch version before using it.</p>
+<p>Patch releases within the same minor may be compatible because the plugin descriptor is rewritten to a <code>~X.Y.Z</code> semver range. Test the exact OpenSearch version before using it. See <a href="../../reference/compatibility/">Compatibility</a> for the current build and test matrix.</p>
 <h2 id="build-from-source">Build from Source<a class="headerlink" href="#build-from-source" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/atlassian-labs/opensearch-aosc.git
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>opensearch-aosc
@@ -1139,17 +1163,25 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>aosc-plugin/build/distributions/opensearch-aosc-&lt;version&gt;.zip
 </span></code></pre></div>
 <p>Repeat the build command with a different <code>-Dopensearch.version=...</code> when you need a ZIP for another supported OpenSearch minor.</p>
+<h2 id="install-from-github-release">Install from GitHub Release<a class="headerlink" href="#install-from-github-release" title="Permanent link">&para;</a></h2>
+<p>Published releases attach one ZIP per supported OpenSearch minor:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>opensearch-aosc-&lt;aosc-version&gt;-opensearch-&lt;opensearch-minor&gt;.zip
+</span></code></pre></div>
+<p>For example, an AOSC <code>0.1.0</code> release for OpenSearch <code>2.19.x</code> uses:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>opensearch-aosc-0.1.0-opensearch-2.19.zip
+</span></code></pre></div>
+<p>Download the ZIP matching your OpenSearch minor, verify it against <code>SHA256SUMS</code>, then install that ZIP on each node.</p>
 <h2 id="install-on-each-node">Install on Each Node<a class="headerlink" href="#install-on-each-node" title="Permanent link">&para;</a></h2>
 <p>Install the plugin on every cluster-manager and data node. Installing it on all nodes is the safest default because transport actions and services are registered by the plugin.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nv">$OPENSEARCH_HOME</span>/bin/opensearch-plugin<span class="w"> </span>install<span class="w"> </span>file:///path/to/opensearch-aosc-&lt;version&gt;.zip
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nv">$OPENSEARCH_HOME</span>/bin/opensearch-plugin<span class="w"> </span>install<span class="w"> </span>file:///path/to/opensearch-aosc-&lt;version&gt;.zip
 </span></code></pre></div>
 <p>Check node roles:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>curl<span class="w"> </span>-s<span class="w"> </span><span class="s1">&#39;http://localhost:9200/_cat/nodes?v&amp;h=name,node.role&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>curl<span class="w"> </span>-s<span class="w"> </span><span class="s1">&#39;http://localhost:9200/_cat/nodes?v&amp;h=name,node.role&#39;</span>
 </span></code></pre></div>
 <p>Restart nodes one at a time according to your OpenSearch operating procedure.</p>
 <h2 id="verify-installation">Verify Installation<a class="headerlink" href="#verify-installation" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:9200/_cat/plugins?v<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>opensearch-aosc
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:9200/_plugins/_aosc/_list<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:9200/_cat/plugins?v<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>opensearch-aosc
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:9200/_plugins/_aosc/_list<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.&#39;</span>
 </span></code></pre></div>
 <p>A cluster with no migrations returns an empty <code>migrations</code> array.</p>
 <h2 id="common-problems">Common Problems<a class="headerlink" href="#common-problems" title="Permanent link">&para;</a></h2>

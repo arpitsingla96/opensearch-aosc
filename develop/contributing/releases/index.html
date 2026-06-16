@@ -504,6 +504,8 @@
       
         
       
+        
+      
     
     
     
@@ -862,10 +864,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#github-ci-policy" class="md-nav__link">
+  <a href="#opensearch-compatibility" class="md-nav__link">
     <span class="md-ellipsis">
       
-        GitHub CI Policy
+        OpenSearch Compatibility
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#github-actions-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub Actions Policy
       
     </span>
   </a>
@@ -1048,10 +1061,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#github-ci-policy" class="md-nav__link">
+  <a href="#opensearch-compatibility" class="md-nav__link">
     <span class="md-ellipsis">
       
-        GitHub CI Policy
+        OpenSearch Compatibility
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#github-actions-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub Actions Policy
       
     </span>
   </a>
@@ -1178,7 +1202,7 @@
 
 
   
-    <a href="https://github.com/atlassian-labs/opensearch-aosc/edit/main/docs/contributing/releases.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/atlassian-labs/opensearch-aosc/edit/develop/docs/contributing/releases.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z"/></svg>
     </a>
@@ -1208,7 +1232,7 @@
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="na">build_versions</span><span class="o">=</span><span class="s">2.15.0,2.17.0,2.19.0</span>
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="na">test_versions</span><span class="o">=</span><span class="s">2.15.0,2.17.0,2.17.1,2.19.0,2.19.3</span>
 </span></code></pre></div>
-<p>Release tags, asset names, GitHub Actions matrices, and release branch checks are derived from these files. Do not type release versions directly into the GitHub workflow.</p>
+<p>Release tags, asset names, documentation versions, GitHub Actions matrices, and release branch checks are derived from these files. Do not type release versions directly into the GitHub workflow.</p>
 <h2 id="branches">Branches<a class="headerlink" href="#branches" title="Permanent link">&para;</a></h2>
 <p>Release branches are organized by OpenSearch major line:</p>
 <table>
@@ -1220,7 +1244,7 @@
 </thead>
 <tbody>
 <tr>
-<td><code>main</code></td>
+<td><code>develop</code></td>
 <td>Active development.</td>
 </tr>
 <tr>
@@ -1233,15 +1257,81 @@
 </tr>
 </tbody>
 </table>
-<p>GitHub release workflows must run from the branch declared in the matching <code>release/&lt;line&gt;.properties</code> file. For example, the OpenSearch 2.x release workflow should only publish from <code>releases/2.x</code>.</p>
-<p>Pushing to a release branch runs CI only. Publishing is manual: run the GitHub <code>Release</code> workflow from the release branch after CI is green.</p>
+<p>GitHub release publishing must run from the branch declared in the matching <code>release/&lt;line&gt;.properties</code> file. For example, the OpenSearch 2.x release publisher should only publish plugin artifacts from <code>releases/2.x</code>.</p>
+<p>Pushing to a release branch runs validation only. Publishing is manual: run the GitHub <code>Publish Release</code> workflow from the release branch after validation is green.</p>
+<p>Do not publish plugin releases directly from <code>develop</code>. Merge or cherry-pick the intended release content into the matching <code>releases/*</code> branch first, then release from that branch. This keeps release artifacts tied to a maintenance line instead of a moving development branch.</p>
 <p>Release tags should include the OpenSearch major line, for example:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>aosc-0.1.0-os2
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>aosc-0.1.0-os3
 </span></code></pre></div>
 <p>Avoid ambiguous tags such as <code>v0.1.0</code> once OpenSearch 2.x and 3.x can diverge.</p>
-<p>The release workflow fails before building if the computed release tag or GitHub release already exists. Bump <code>aosc.version</code> before publishing another release for the same OpenSearch line.</p>
-<h2 id="github-ci-policy">GitHub CI Policy<a class="headerlink" href="#github-ci-policy" title="Permanent link">&para;</a></h2>
+<p>The publish workflow fails before building if the computed release tag or GitHub release already exists. Bump <code>aosc.version</code> before publishing another release for the same OpenSearch line.</p>
+<h2 id="opensearch-compatibility">OpenSearch Compatibility<a class="headerlink" href="#opensearch-compatibility" title="Permanent link">&para;</a></h2>
+<p>Each release line declares two compatibility lists:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>build_versions</code></td>
+<td>OpenSearch minors that receive release ZIPs.</td>
+</tr>
+<tr>
+<td><code>test_versions</code></td>
+<td>Exact OpenSearch patch versions covered by CI.</td>
+</tr>
+</tbody>
+</table>
+<p>For OpenSearch 2.x, AOSC currently builds release ZIPs for <code>2.15</code>, <code>2.17</code>, and <code>2.19</code>, and runs CI against <code>2.15.0</code>, <code>2.17.0</code>, <code>2.17.1</code>, <code>2.19.0</code>, and <code>2.19.3</code>.</p>
+<p>The ZIP name intentionally uses the OpenSearch minor, for example <code>opensearch-aosc-0.1.0-opensearch-2.19.zip</code>. The plugin descriptor uses a patch-compatible semver range for that minor, so the <code>2.19</code> ZIP is intended for the <code>2.19.x</code> line unless the release notes call out an exception.</p>
+<h2 id="github-actions-policy">GitHub Actions Policy<a class="headerlink" href="#github-actions-policy" title="Permanent link">&para;</a></h2>
+<p>The workflow files are split by the reason a workflow runs:</p>
+<table>
+<thead>
+<tr>
+<th>Workflow</th>
+<th>File</th>
+<th>Trigger</th>
+<th>Publishes?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pull Request</td>
+<td><code>.github/workflows/pull-request.yml</code></td>
+<td>Pull requests targeting <code>develop</code> or <code>releases/**</code></td>
+<td>No</td>
+</tr>
+<tr>
+<td>Branch: develop</td>
+<td><code>.github/workflows/branch-develop.yml</code></td>
+<td>Pushes to <code>develop</code></td>
+<td>Publishes <code>/develop/</code> docs after validation passes</td>
+</tr>
+<tr>
+<td>Branch: release</td>
+<td><code>.github/workflows/branch-release.yml</code></td>
+<td>Pushes to <code>releases/**</code></td>
+<td>No</td>
+</tr>
+<tr>
+<td>Publish Release</td>
+<td><code>.github/workflows/publish-release.yml</code></td>
+<td>Manual dispatch from a release branch</td>
+<td>Publishes GitHub release assets and release docs</td>
+</tr>
+<tr>
+<td>Components</td>
+<td><code>.github/workflows/components.yml</code></td>
+<td>Reusable workflow only</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
 <p>Pull requests run full CI automatically. Full CI builds the docs and validates every OpenSearch version in <code>test_versions</code> from <code>release/&lt;line&gt;.properties</code>.</p>
 <p>Full CI runs these suite categories as separate jobs so failures identify the exact affected OpenSearch version and suite:</p>
 <ul>
@@ -1253,11 +1343,11 @@
 <li>Docker smoke tests</li>
 <li>high-shard 2-node scale tests</li>
 </ul>
-<p>Pushes to <code>main</code> and <code>releases/**</code> also run full CI. Branch protection should require the stable check name:</p>
+<p>Pushes to <code>develop</code> and <code>releases/**</code> also run full CI. Branch protection should require the stable check name:</p>
 <ul>
 <li><code>Full CI</code></li>
 </ul>
-<p>The <code>Release</code> workflow runs the same full validation before it builds release ZIPs or creates a draft GitHub release.</p>
+<p>The <code>Publish Release</code> workflow runs the same full validation before it builds release ZIPs or creates a draft GitHub release.</p>
 <h2 id="github-release-assets">GitHub Release Assets<a class="headerlink" href="#github-release-assets" title="Permanent link">&para;</a></h2>
 <p>Each GitHub release should include:</p>
 <ul>
@@ -1285,8 +1375,9 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>./scripts/release-metadata.sh<span class="w"> </span>os2
 </span></code></pre></div>
 <h2 id="documentation-site">Documentation Site<a class="headerlink" href="#documentation-site" title="Permanent link">&para;</a></h2>
-<p>GitHub Pages uses MkDocs Material with <code>mike</code> versioning. Pull requests and branch pushes build the docs as CI validation only; they do not publish the site.</p>
-<p>The <code>Release</code> workflow publishes docs to the <code>gh-pages</code> branch after release validation, asset build, and draft release creation succeed. The GitHub Pages repository setting should serve from the <code>gh-pages</code> branch at <code>/</code>.</p>
+<p>GitHub Pages uses MkDocs Material with <code>mike</code> versioning. Pull requests build the docs as CI validation only; they do not publish the site.</p>
+<p>The <code>Publish Release</code> workflow publishes release docs to the <code>gh-pages</code> branch after release validation, asset build, and draft release creation succeed. The GitHub Pages repository setting should serve from the <code>gh-pages</code> branch at <code>/</code>.</p>
+<p>Pushes to <code>develop</code> publish the current development docs to <code>/develop/</code> after full CI passes.</p>
 <p>The current docs layout is:</p>
 <table>
 <thead>
@@ -1297,25 +1388,26 @@
 </thead>
 <tbody>
 <tr>
-<td>current development branch, currently <code>main</code></td>
-<td><code>/develop/</code> with <code>/latest/</code> alias</td>
+<td><code>develop</code></td>
+<td><code>/develop/</code></td>
 </tr>
 <tr>
-<td><code>releases/2.x</code></td>
-<td><code>/2.x/</code></td>
+<td><code>releases/2.x</code> with <code>aosc.version=0.1.0</code></td>
+<td><code>/0.1-os2/</code></td>
 </tr>
 <tr>
-<td><code>releases/3.x</code></td>
-<td><code>/3.x/</code> once the branch exists.</td>
+<td><code>releases/3.x</code> with <code>aosc.version=0.1.0</code></td>
+<td><code>/0.1-os3/</code> once the branch exists</td>
 </tr>
 </tbody>
 </table>
+<p>Release documentation is versioned by AOSC minor line plus OpenSearch major line. For example, <code>aosc.version=0.1.0</code> and <code>line=os2</code> publish to <code>/0.1-os2/</code>. A patch release such as <code>0.1.1</code> updates the same <code>/0.1-os2/</code> documentation version instead of creating a new docs version for every patch.</p>
 <p>Build the docs locally with:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>mkdocs<span class="w"> </span>build<span class="w"> </span>--strict
 </span></code></pre></div>
 <p><code>mike</code> owns the version selector and generated <code>versions.json</code>; do not edit those files by hand.</p>
 <h2 id="ci-artifacts">CI Artifacts<a class="headerlink" href="#ci-artifacts" title="Permanent link">&para;</a></h2>
-<p>CI uploads Gradle reports and test results only when a validation job fails. Normal CI artifacts expire after 7 days; release workflow test artifacts expire after 14 days. Release ZIPs are not CI artifacts; they are attached to GitHub Releases.</p>
+<p>CI uploads Gradle reports and test results only when a validation job fails. Normal CI artifacts expire after 7 days; publish workflow test artifacts expire after 14 days. Release ZIPs are not CI artifacts; they are attached to GitHub Releases.</p>
 <h2 id="first-public-import">First Public Import<a class="headerlink" href="#first-public-import" title="Permanent link">&para;</a></h2>
 <p>Public GitHub history starts from the OSS import. Earlier internal development history is not part of the public repository.</p>
 

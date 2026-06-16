@@ -12,13 +12,13 @@
         <meta name="author" content="Atlassian">
       
       
-        <link rel="canonical" href="https://atlassian-labs.github.io/opensearch-aosc/develop/concepts/correctness-model/">
+        <link rel="canonical" href="https://atlassian-labs.github.io/opensearch-aosc/develop/reference/compatibility/">
       
       
-        <link rel="prev" href="../architecture-overview/">
+        <link rel="prev" href="../rest-api/">
       
       
-        <link rel="next" href="../backpressure-and-throttling/">
+        <link rel="next" href="../configuration/">
       
       
         
@@ -29,7 +29,7 @@
     
     
       
-        <title>Correctness Model - AOSC - Automatic Online Schema Change</title>
+        <title>Compatibility - AOSC - Automatic Online Schema Change</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#correctness-model" class="md-skip">
+        <a href="#compatibility" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Correctness Model
+              Compatibility
             
           </span>
         </div>
@@ -483,74 +483,6 @@
       
   
   
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-      
-        
-        
-      
-    
-    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
-      
-        
-  
-  
-  
-    <a href="../../reference/" class="md-nav__link">
-      
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Reference
-  
-
-    
-  </span>
-  
-  
-
-      
-        <span class="md-nav__icon md-icon"></span>
-      
-    </a>
-  
-
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
     
   
   
@@ -560,6 +492,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -582,7 +518,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -590,12 +526,12 @@
               
   
   
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 6a6 6 0 0 1 6 6c0 2.22-1.21 4.16-3 5.2V19a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-1.8c-1.79-1.04-3-2.98-3-5.2a6 6 0 0 1 6-6m2 15v1a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-1zm6-10h3v2h-3zM1 11h3v2H1zM13 1v3h-2V1zM4.92 3.5l2.13 2.14-1.42 1.41L3.5 4.93zm12.03 2.13 2.12-2.13 1.43 1.43-2.13 2.12z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 3a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2H3v2h1a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h2v-2H8v-5a2 2 0 0 0-2-2 2 2 0 0 0 2-2V5h2V3m6 0a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h1v2h-1a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-2v-2h2v-5a2 2 0 0 1 2-2 2 2 0 0 1-2-2V5h-2V3z"/></svg>
   
   <span class="md-ellipsis">
     
   
-    Concepts
+    Reference
   
 
     
@@ -606,18 +542,18 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_6">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
   
-    Concepts
+    Reference
   
 
           </label>
@@ -632,14 +568,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../architecture-overview/" class="md-nav__link">
+      <a href="../rest-api/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Architecture Overview
+    REST API
   
 
     
@@ -676,7 +612,7 @@
   <span class="md-ellipsis">
     
   
-    Correctness Model
+    Compatibility
   
 
     
@@ -694,7 +630,7 @@
   <span class="md-ellipsis">
     
   
-    Correctness Model
+    Compatibility
   
 
     
@@ -720,10 +656,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-aosc-tries-to-preserve" class="md-nav__link">
+  <a href="#current-opensearch-2x-line" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What AOSC Tries to Preserve
+        Current OpenSearch 2.x Line
       
     </span>
   </a>
@@ -731,54 +667,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#backfill" class="md-nav__link">
+  <a href="#compatibility-policy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Backfill
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#operation-history-replay" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Operation-History Replay
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#convergence" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Convergence
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cutover" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Cutover
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#important-boundaries" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Important Boundaries
+        Compatibility Policy
       
     </span>
   </a>
@@ -801,14 +693,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../backpressure-and-throttling/" class="md-nav__link">
+      <a href="../configuration/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Backpressure & Throttling
+    Configuration
   
 
     
@@ -829,14 +721,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../hld-deep-dive/" class="md-nav__link">
+      <a href="../state-machine/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    HLD Deep Dive
+    State Machine
   
 
     
@@ -857,14 +749,72 @@
   
   
     <li class="md-nav__item">
-      <a href="../comparison-and-tradeoffs/" class="md-nav__link">
+      <a href="../error-codes/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Comparison & Tradeoffs
+    Error Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../known-limitations/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 15h2v2h-2zm0-8h2v6h-2zm1-5C6.47 2 2 6.5 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 18a8 8 0 0 1-8-8 8 8 0 0 1 8-8 8 8 0 0 1 8 8 8 8 0 0 1-8 8"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Known Limitations
   
 
     
@@ -880,6 +830,70 @@
             
           </ul>
         </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../concepts/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
       
     </li>
   
@@ -978,10 +992,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-aosc-tries-to-preserve" class="md-nav__link">
+  <a href="#current-opensearch-2x-line" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What AOSC Tries to Preserve
+        Current OpenSearch 2.x Line
       
     </span>
   </a>
@@ -989,54 +1003,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#backfill" class="md-nav__link">
+  <a href="#compatibility-policy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Backfill
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#operation-history-replay" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Operation-History Replay
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#convergence" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Convergence
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cutover" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Cutover
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#important-boundaries" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Important Boundaries
+        Compatibility Policy
       
     </span>
   </a>
@@ -1089,7 +1059,7 @@
         <a href="../" class="md-path__link">
           
   <span class="md-ellipsis">
-    Concepts
+    Reference
   </span>
 
         </a>
@@ -1108,7 +1078,7 @@
 
 
   
-    <a href="https://github.com/atlassian-labs/opensearch-aosc/edit/develop/docs/concepts/correctness-model.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/atlassian-labs/opensearch-aosc/edit/develop/docs/reference/compatibility.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z"/></svg>
     </a>
@@ -1116,37 +1086,55 @@
   
 
 
-<h1 id="correctness-model">Correctness Model<a class="headerlink" href="#correctness-model" title="Permanent link">&para;</a></h1>
-<p>AOSC's correctness model is based on backfill, source operation-history replay, and a write-blocked cutover.</p>
-<h2 id="what-aosc-tries-to-preserve">What AOSC Tries to Preserve<a class="headerlink" href="#what-aosc-tries-to-preserve" title="Permanent link">&para;</a></h2>
-<p>For supported routing and transform configurations, AOSC aims for the target index to reflect the source index at cutover time after applying the configured transform.</p>
-<p>This is not a blanket guarantee for every index configuration. Custom routing, unsupported transform behavior, application writes that do not retry, and manual interference can break the expected result.</p>
-<h2 id="backfill">Backfill<a class="headerlink" href="#backfill" title="Permanent link">&para;</a></h2>
-<p>Each shard worker reads source documents from its source primary and writes transformed documents to the target. Backfill writes use document IDs and routing values from the source document and use idempotent index operations.</p>
-<h2 id="operation-history-replay">Operation-History Replay<a class="headerlink" href="#operation-history-replay" title="Permanent link">&para;</a></h2>
-<p>AOSC uses source-shard operation history to replay writes that happen during backfill. Workers track sequence-number progress and replay index/create/delete operations into the target.</p>
-<p>Retention leases are used to keep required operation history available while workers are active.</p>
-<h2 id="convergence">Convergence<a class="headerlink" href="#convergence" title="Permanent link">&para;</a></h2>
-<p>After the first replay pass, workers continue replaying until the gap to the source global checkpoint is below the configured threshold. At cutover, AOSC write-blocks the source and requires final catch-up to close the gap.</p>
-<h2 id="cutover">Cutover<a class="headerlink" href="#cutover" title="Permanent link">&para;</a></h2>
-<p>The coordinator:</p>
-<ol>
-<li>Restores target settings needed for readiness.</li>
-<li>Applies a source write block.</li>
-<li>Flushes the source.</li>
-<li>Signals workers to replay final operations.</li>
-<li>Validates source and target document counts, optionally filtered by <code>validation_query</code>.</li>
-<li>Swaps the alias from source to target.</li>
-<li>Removes the source write block when configured.</li>
-</ol>
-<h2 id="important-boundaries">Important Boundaries<a class="headerlink" href="#important-boundaries" title="Permanent link">&para;</a></h2>
+<h1 id="compatibility">Compatibility<a class="headerlink" href="#compatibility" title="Permanent link">&para;</a></h1>
+<p>AOSC has two version axes:</p>
 <ul>
-<li>Backfill and replay write target documents by ID/source/routing; they do not preserve OpenSearch internal <code>_version</code> or <code>_seq_no</code> as target metadata.</li>
-<li>Built-in transforms are update-script based and emit one target document per source document.</li>
-<li>AOSC relies on applications retrying writes rejected during the cutover write block.</li>
-<li>Post-cutover rollback is not automatic and can lose writes if handled incorrectly.</li>
-<li>The target index remains after cancellation or failure for inspection and manual cleanup.</li>
+<li><strong>AOSC version</strong>: the plugin release version, such as <code>0.1.0</code>.</li>
+<li><strong>OpenSearch line</strong>: the OpenSearch major line the artifact targets, such as <code>os2</code>.</li>
 </ul>
+<p>Release artifacts are built per supported OpenSearch minor because OpenSearch plugins are loaded with version compatibility checks. Documentation is versioned by AOSC minor line plus OpenSearch major line, for example <code>/0.1-os2/</code>.</p>
+<h2 id="current-opensearch-2x-line">Current OpenSearch 2.x Line<a class="headerlink" href="#current-opensearch-2x-line" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Release branch</td>
+<td><code>releases/2.x</code></td>
+</tr>
+<tr>
+<td>AOSC release line</td>
+<td><code>0.1</code></td>
+</tr>
+<tr>
+<td>Documentation version</td>
+<td><code>0.1-os2</code></td>
+</tr>
+<tr>
+<td>Primary OpenSearch version</td>
+<td><code>2.19.0</code></td>
+</tr>
+<tr>
+<td>Release ZIP minors</td>
+<td><code>2.15</code>, <code>2.17</code>, <code>2.19</code></td>
+</tr>
+<tr>
+<td>CI test versions</td>
+<td><code>2.15.0</code>, <code>2.17.0</code>, <code>2.17.1</code>, <code>2.19.0</code>, <code>2.19.3</code></td>
+</tr>
+</tbody>
+</table>
+<p>The ZIP name includes the OpenSearch minor it was built for:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>opensearch-aosc-0.1.0-opensearch-2.19.zip
+</span></code></pre></div>
+<p>Use the ZIP matching your OpenSearch minor. A <code>2.19</code> ZIP is intended for the <code>2.19.x</code> patch line unless a release note says otherwise.</p>
+<h2 id="compatibility-policy">Compatibility Policy<a class="headerlink" href="#compatibility-policy" title="Permanent link">&para;</a></h2>
+<p>Patch-level compatibility is validated by CI for the exact OpenSearch versions listed above. Other patch releases in the same OpenSearch minor may work because the plugin descriptor uses a patch-compatible semver range, but test the exact OpenSearch version before production use.</p>
+<p>Do not install an AOSC ZIP built for a different OpenSearch minor unless the release notes explicitly say it is supported.</p>
 
 
 
@@ -1184,7 +1172,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../architecture-overview/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Architecture Overview">
+          <a href="../rest-api/" class="md-footer__link md-footer__link--prev" aria-label="Previous: REST API">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1194,20 +1182,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Architecture Overview
+                REST API
               </div>
             </div>
           </a>
         
         
           
-          <a href="../backpressure-and-throttling/" class="md-footer__link md-footer__link--next" aria-label="Next: Backpressure &amp; Throttling">
+          <a href="../configuration/" class="md-footer__link md-footer__link--next" aria-label="Next: Configuration">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Backpressure & Throttling
+                Configuration
               </div>
             </div>
             <div class="md-footer__button md-icon">
