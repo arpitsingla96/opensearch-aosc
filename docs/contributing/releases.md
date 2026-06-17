@@ -12,7 +12,13 @@ The plugin descriptor uses a patch-compatible semver range for the selected Open
 The AOSC release version is tracked in `version.properties`:
 
 ```properties
-aosc.version=0.1.0
+aosc.version=0.0.0-dev
+```
+
+`develop` intentionally uses `0.0.0-dev`. Release branches are authoritative for release versions and should carry a concrete release candidate such as:
+
+```properties
+aosc.version=0.1.0-SNAPSHOT
 ```
 
 OpenSearch compatibility metadata is tracked per release line:
@@ -59,7 +65,40 @@ aosc-0.1.0-os3
 
 Avoid ambiguous tags such as `v0.1.0` once OpenSearch 2.x and 3.x can diverge.
 
-The publish workflow fails before building if the computed release tag or GitHub release already exists. Bump `aosc.version` before publishing another release for the same OpenSearch line.
+The publish workflow fails before building if the computed GitHub release or tag already exists. Bump `aosc.version` before publishing another release for the same OpenSearch line.
+
+## Release Version Lifecycle
+
+Release branches use `-SNAPSHOT` as the pre-release marker for the next intended release:
+
+```text
+develop:      0.0.0-dev
+releases/2.x: 0.1.0-SNAPSHOT
+prepare:      human commits 0.1.0-SNAPSHOT -> 0.1.0
+publish:      workflow tags 0.1.0, creates draft GitHub release, deploys docs
+next work:    human commits 0.1.0 -> 0.1.1-SNAPSHOT, 0.2.0-SNAPSHOT, or 1.0.0-SNAPSHOT
+```
+
+The release workflow never commits back to the release branch. The release branch must already be in a releasable state before the workflow starts.
+
+Manual release flow:
+
+1. Merge or cherry-pick the intended changes into the matching release branch.
+2. Set `aosc.version=X.Y.Z-SNAPSHOT` while preparing and validating the release branch.
+3. Commit `aosc.version=X.Y.Z` when the branch is ready to release.
+4. Run `Publish Release` from the release branch.
+5. The workflow validates the current branch state, runs full CI, creates tag `aosc-X.Y.Z-os2`, builds release ZIPs, creates a draft GitHub release, and publishes docs.
+6. After release, commit the next `-SNAPSHOT` version to the release branch.
+
+The workflow rejects `develop` versions such as `0.0.0-dev` and release-candidate versions such as `0.1.0-SNAPSHOT`; releases must be made from `releases/*` branches using exact `X.Y.Z` versions.
+
+Use patch, minor, and major bumps this way:
+
+| Bump | Use when | Example next snapshot |
+| --- | --- | --- |
+| Patch | Fixes, documentation corrections, CI/release fixes, compatibility metadata corrections | `0.1.1-SNAPSHOT` |
+| Minor | New compatible user-visible behavior, new settings, new APIs, expanded compatibility | `0.2.0-SNAPSHOT` |
+| Major | Breaking API, behavior, state format, or operational contract changes | `1.0.0-SNAPSHOT` |
 
 ## OpenSearch Compatibility
 
@@ -158,10 +197,10 @@ The current docs layout is:
 | Source | Published path |
 | --- | --- |
 | `develop` | `/develop/` |
-| `releases/2.x` with `aosc.version=0.1.0` | `/0.1-os2/` |
-| `releases/3.x` with `aosc.version=0.1.0` | `/0.1-os3/` once the branch exists |
+| `releases/2.x` with `aosc.version=0.1.0` | `/0.1.0-os2/` |
+| `releases/3.x` with `aosc.version=0.1.0` | `/0.1.0-os3/` once the branch exists |
 
-Release documentation is versioned by AOSC minor line plus OpenSearch major line. For example, `aosc.version=0.1.0` and `line=os2` publish to `/0.1-os2/`. A patch release such as `0.1.1` updates the same `/0.1-os2/` documentation version instead of creating a new docs version for every patch.
+Release documentation is versioned by exact AOSC patch version plus OpenSearch major line. For example, `aosc.version=0.1.0` and `line=os2` publish to `/0.1.0-os2/`. A patch release such as `0.1.1` publishes separate documentation at `/0.1.1-os2/`.
 
 Build the docs locally with:
 

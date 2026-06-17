@@ -27,6 +27,13 @@ type DrawioExporter = {
   enqueue: (job: DrawioJob) => void;
 };
 
+type DocsVersion = {
+  version: string;
+  title?: string;
+};
+
+let docsVersionsPromise: Promise<DocsVersion[]> | null = null;
+
 function docsVersionRoot(): string {
   const base = import.meta.env.BASE_URL || "/";
   const normalized = base.endsWith("/") ? base : `${base}/`;
@@ -35,17 +42,96 @@ function docsVersionRoot(): string {
   return `/${parts.slice(0, -1).join("/")}/`;
 }
 
-function bindVersionLinks() {
-  if (typeof document === "undefined") return;
-  const versionLinks: Record<string, string> = {
-    "#aosc-docs-version-develop": "develop/",
-  };
+function currentDocsVersion(): string {
+  const base = import.meta.env.BASE_URL || "/";
+  const normalized = base.endsWith("/") ? base : `${base}/`;
+  const parts = normalized.split("/").filter(Boolean);
+  return parts.at(-1) || "develop";
+}
+
+async function docsVersions(): Promise<DocsVersion[]> {
+  if (docsVersionsPromise) return docsVersionsPromise;
   const versionRoot = docsVersionRoot();
-  Object.entries(versionLinks).forEach(([anchor, versionPath]) => {
-    document.querySelectorAll<HTMLAnchorElement>(`a[href$="${anchor}"]`).forEach((link) => {
-      link.href = `${window.location.origin}${versionRoot}${versionPath}`;
+  docsVersionsPromise = fetch(`${versionRoot}versions.json`, { cache: "no-store" })
+    .then(async (response) => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const versions = await response.json();
+      if (!Array.isArray(versions)) throw new Error("versions.json must be an array");
+      return versions
+        .filter((entry): entry is DocsVersion => typeof entry?.version === "string")
+        .map((entry) => ({ version: entry.version, title: entry.title || entry.version }));
+    })
+    .catch((error) => {
+      console.warn("[aosc-docs] Failed to load versions.json", error);
+      return [{ version: "develop", title: "Develop" }];
     });
+  return docsVersionsPromise;
+}
+
+function versionMenuLinks(): HTMLAnchorElement[] {
+  return Array.from(document.querySelectorAll<HTMLAnchorElement>('a[href$="#aosc-docs-version-develop"]'));
+}
+
+function versionMenus(): HTMLElement[] {
+  const menus = new Set<HTMLElement>();
+  versionMenuLinks().forEach((link) => {
+    const menu = link.closest<HTMLElement>(".VPMenu");
+    if (menu) menus.add(menu);
   });
+  return Array.from(menus);
+}
+
+function versionLink(versionRoot: string, version: string): string {
+  return `${window.location.origin}${versionRoot}${version}/`;
+}
+
+function forceDocumentNavigation(link: HTMLAnchorElement) {
+  if (link.dataset.aoscVersionNavigationBound === "true") return;
+  link.dataset.aoscVersionNavigationBound = "true";
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    window.location.assign(link.href);
+  });
+}
+
+function renderVersionMenu(menu: HTMLElement, versions: DocsVersion[]) {
+  const versionRoot = docsVersionRoot();
+  const activeVersion = currentDocsVersion();
+  const target = menu.querySelector<HTMLElement>(".items") || menu;
+
+  target.textContent = "";
+  versions.forEach((entry) => {
+    const item = document.createElement("div");
+    item.className = "VPMenuLink";
+
+    const link = document.createElement("a");
+    link.className = entry.version === activeVersion ? "link active" : "link";
+    link.href = versionLink(versionRoot, entry.version);
+    link.textContent = entry.version === "develop" ? "Develop" : entry.title || entry.version;
+    forceDocumentNavigation(link);
+
+    item.appendChild(link);
+    target.appendChild(item);
+  });
+}
+
+function bindVersionMenu() {
+  if (typeof document === "undefined") return;
+  const menus = versionMenus();
+  if (menus.length === 0) return;
+  const versionRoot = docsVersionRoot();
+
+  versionMenuLinks().forEach((link) => {
+    link.href = versionLink(versionRoot, "develop");
+    forceDocumentNavigation(link);
+  });
+
+  docsVersions()
+    .then((versions) => {
+      menus.forEach((menu) => renderVersionMenu(menu, versions));
+    })
+    .catch((error) => console.warn("[aosc-docs] Version menu render failed", error));
 }
 
 function decodeBase64Utf8(value: string): string {
@@ -246,7 +332,7 @@ async function renderMermaid() {
 }
 
 function enhanceCurrentPage() {
-  bindVersionLinks();
+  bindVersionMenu();
   bindDrawioExports();
   bindImageZoom();
   window.initStateMachineViz?.();

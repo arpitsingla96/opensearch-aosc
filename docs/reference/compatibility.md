@@ -5,15 +5,15 @@ AOSC has two version axes:
 - **AOSC version**: the plugin release version, such as `0.1.0`.
 - **OpenSearch line**: the OpenSearch major line the artifact targets, such as `os2`.
 
-Release artifacts are built per supported OpenSearch minor because OpenSearch plugins are loaded with version compatibility checks. Documentation is versioned by AOSC minor line plus OpenSearch major line, for example `/0.1-os2/`.
+Release artifacts are built per supported OpenSearch minor because OpenSearch plugins are loaded with version compatibility checks. Documentation is versioned by exact AOSC patch version plus OpenSearch major line, for example `/0.1.0-os2/`.
 
 ## Current OpenSearch 2.x Line
 
 | Field | Value |
 | --- | --- |
 | Release branch | `releases/2.x` |
-| AOSC release line | `0.1` |
-| Documentation version | `0.1-os2` |
+| AOSC version | `0.1.0` |
+| Documentation version | `0.1.0-os2` |
 | Primary OpenSearch version | `2.19.0` |
 | Release ZIP minors | `2.15`, `2.17`, `2.19` |
 | CI test versions | `2.15.0`, `2.17.0`, `2.17.1`, `2.19.0`, `2.19.3` |
