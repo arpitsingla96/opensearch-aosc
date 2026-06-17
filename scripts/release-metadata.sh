@@ -33,8 +33,7 @@ PRIMARY_VERSION="$(read_prop "${LINE_FILE}" "primary_version")"
 BUILD_VERSIONS="$(read_prop "${LINE_FILE}" "build_versions")"
 TEST_VERSIONS="$(read_prop "${LINE_FILE}" "test_versions")"
 RELEASE_TAG="aosc-${AOSC_VERSION}-${OS_LINE}"
-AOSC_RELEASE_LINE="${AOSC_VERSION%.*}"
-DOCS_VERSION="${AOSC_RELEASE_LINE}-${OS_LINE}"
+DOCS_VERSION="${AOSC_VERSION}-${OS_LINE}"
 
 if [[ "${OS_LINE}" != "${LINE}" ]]; then
   echo "Line mismatch: requested ${LINE}, but ${LINE_FILE} declares ${OS_LINE}" >&2
@@ -45,7 +44,6 @@ case "${FORMAT}" in
   --shell)
     cat <<EOF
 AOSC_VERSION=${AOSC_VERSION}
-AOSC_RELEASE_LINE=${AOSC_RELEASE_LINE}
 OS_LINE=${OS_LINE}
 RELEASE_BRANCH=${RELEASE_BRANCH}
 PRIMARY_VERSION=${PRIMARY_VERSION}
@@ -58,7 +56,6 @@ EOF
   --summary)
     cat <<EOF
 AOSC version: ${AOSC_VERSION}
-AOSC release line: ${AOSC_RELEASE_LINE}
 OpenSearch line: ${OS_LINE}
 Release branch: ${RELEASE_BRANCH}
 Primary version: ${PRIMARY_VERSION}

@@ -10,14 +10,6 @@ on:
         type: choice
         options:
           - os2
-      mode:
-        description: Release mode
-        required: true
-        default: dry-run
-        type: choice
-        options:
-          - dry-run
-          - draft-release
       prerelease:
         description: Mark draft release as prerelease
         required: true
@@ -48,25 +40,32 @@ jobs:
       test_versions_json: ${{ steps.matrix.outputs.test_versions_json }}
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
       - id: matrix
         run: ./scripts/github-ci-matrix.sh "${{ inputs.os_line }}" --github-output
-      - name: Check release branch
+      - name: Check release state
+        env:
+          AOSC_VERSION: ${{ steps.matrix.outputs.aosc_version }}
+          RELEASE_BRANCH: ${{ steps.matrix.outputs.release_branch }}
+          RELEASE_TAG: ${{ steps.matrix.outputs.release_tag }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          if [[ "${GITHUB_REF_NAME}" != "${{ steps.matrix.outputs.release_branch }}" ]]; then
-            echo "Release line ${{ steps.matrix.outputs.os_line }} must be published from ${{ steps.matrix.outputs.release_branch }}; current ref is ${GITHUB_REF_NAME}" >&2
+          if [[ "${GITHUB_REF_NAME}" != "${RELEASE_BRANCH}" ]]; then
+            echo "Release line ${{ steps.matrix.outputs.os_line }} must be published from ${RELEASE_BRANCH}; current ref is ${GITHUB_REF_NAME}" >&2
             exit 1
           fi
-      - name: Check release tag is unused
-        env:
-          GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ steps.matrix.outputs.release_tag }}
-        run: |
+          if [[ ! "${AOSC_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Release publishing requires aosc.version to be exact X.Y.Z; found ${AOSC_VERSION}" >&2
+            exit 1
+          fi
           if gh release view "${RELEASE_TAG}" >/dev/null 2>&1; then
-            echo "GitHub release ${RELEASE_TAG} already exists. Bump aosc.version in version.properties before releasing again." >&2
+            echo "GitHub release ${RELEASE_TAG} already exists." >&2
             exit 1
           fi
           if git ls-remote --exit-code --tags origin "refs/tags/${RELEASE_TAG}" >/dev/null 2>&1; then
-            echo "Git tag ${RELEASE_TAG} already exists. Bump aosc.version in version.properties before releasing again." >&2
+            echo "Git tag ${RELEASE_TAG} already exists." >&2
             exit 1
           fi
 
@@ -135,7 +134,7 @@ jobs:
     needs:
       - metadata
       - build
-    if: ${{ always() && inputs.mode == 'draft-release' && needs.metadata.result == 'success' && needs.build.result == 'success' }}
+    if: ${{ always() && needs.metadata.result == 'success' && needs.build.result == 'success' }}
     runs-on: ubuntu-latest
     environment: release
     permissions:
@@ -144,6 +143,8 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - uses: actions/download-artifact@v8
         with:
           name: release-assets-${{ needs.metadata.outputs.release_tag }}-${{ github.run_attempt }}
@@ -155,12 +156,16 @@ jobs:
       - name: Create draft GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ needs.metadata.outputs.release_tag }}
         run: |
-          FLAGS=(--draft --target "${GITHUB_SHA}" --title "${{ needs.metadata.outputs.release_tag }}" --notes-file build/release/RELEASE_NOTES.md)
+          git fetch --tags origin
+          git tag "${RELEASE_TAG}" "${GITHUB_SHA}"
+          git push origin "refs/tags/${RELEASE_TAG}"
+          FLAGS=(--draft --target "${GITHUB_SHA}" --title "${RELEASE_TAG}" --notes-file build/release/RELEASE_NOTES.md)
           if [[ "${{ inputs.prerelease }}" == "true" ]]; then
             FLAGS+=(--prerelease)
           fi
-          gh release create "${{ needs.metadata.outputs.release_tag }}" build/release/*.zip build/release/SHA256SUMS "${FLAGS[@]}"
+          gh release create "${RELEASE_TAG}" build/release/*.zip build/release/SHA256SUMS "${FLAGS[@]}"
 
   deploy_docs:
     name: Deploy release docs
@@ -168,7 +173,7 @@ jobs:
       - metadata
       - build
       - draft-release
-    if: ${{ always() && inputs.mode == 'draft-release' && needs.metadata.result == 'success' && needs.build.result == 'success' && needs.draft-release.result == 'success' }}
+    if: ${{ always() && needs.metadata.result == 'success' && needs.build.result == 'success' && needs.draft-release.result == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write

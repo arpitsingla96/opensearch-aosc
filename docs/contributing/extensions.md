@@ -2,7 +2,7 @@
 
 AOSC exposes a small extension surface for plugins that need to customize migration behavior while reusing the base coordinator, worker, and REST machinery.
 
-These APIs should be treated as public compatibility surfaces within a supported release line.
+These APIs should be treated as public compatibility surfaces within a supported OpenSearch major line.
 
 ## `AoscPlugin`
 
@@ -10,7 +10,7 @@ These APIs should be treated as public compatibility surfaces within a supported
 
 Compatibility expectations:
 
-- constructors and protected factory methods used by extension plugins should remain source-compatible within a release line
+- constructors and protected factory methods used by extension plugins should remain source-compatible within a supported OpenSearch major line
 - incompatible changes require release notes and a major compatibility-line decision
 - extension plugins should keep the installed plugin identity compatible with the deployment model they target
 

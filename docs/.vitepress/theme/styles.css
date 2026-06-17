@@ -191,6 +191,51 @@
   line-height: 1.55;
 }
 
+.VPMenu.aosc-version-menu {
+  min-width: 220px;
+  padding: 8px;
+}
+
+.VPMenu.aosc-version-menu .items {
+  display: grid;
+  gap: 4px;
+}
+
+.VPMenu.aosc-version-menu .VPMenuLink {
+  padding: 0;
+}
+
+.VPMenu.aosc-version-menu .aosc-version-link {
+  display: grid;
+  gap: 2px;
+  border-radius: 7px;
+  padding: 9px 10px;
+  color: var(--vp-c-text-1);
+  text-decoration: none;
+}
+
+.VPMenu.aosc-version-menu .aosc-version-link:hover {
+  color: var(--vp-c-brand-1);
+  background: var(--vp-c-bg-soft);
+}
+
+.VPMenu.aosc-version-menu .aosc-version-link.active {
+  color: var(--vp-c-brand-1);
+  background: var(--vp-c-brand-soft);
+}
+
+.aosc-version-title {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.aosc-version-subtitle {
+  color: var(--vp-c-text-2);
+  font-size: 12px;
+  line-height: 1.3;
+}
+
 .drawio-figure {
   position: relative;
   margin: 24px 0;
