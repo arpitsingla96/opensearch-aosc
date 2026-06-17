@@ -20,7 +20,7 @@ The build currently declares support for OpenSearch `2.15.0`, `2.17.0`, and `2.1
 
 The generated plugin descriptor uses a patch-compatible semver range for the selected minor version. See [Install the Plugin](docs/how-to/install-the-plugin.md) for details.
 
-The AOSC release version is tracked in `version.properties`. Release tags include both the AOSC version and the OpenSearch major compatibility line, for example `aosc-0.1.0-os2`. See [Releases](docs/contributing/releases.md).
+The AOSC project version is tracked in `version.properties`. Release branches use that file as the authoritative release version; `develop` uses a non-release development version. Release tags include both the AOSC version and the OpenSearch major compatibility line, for example `aosc-0.1.0-os2`. See [Releases](docs/contributing/releases.md).
 
 ## Quick Start
 
