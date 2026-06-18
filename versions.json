@@ -23,5 +23,10 @@
     "version": "0.98-os2",
     "title": "0.98-os2",
     "aliases": []
+  },
+  {
+    "version": "0.98.1-os2",
+    "title": "0.98.1-os2",
+    "aliases": []
   }
 ]
