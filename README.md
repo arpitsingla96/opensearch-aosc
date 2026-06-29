@@ -12,15 +12,22 @@ For a visual walkthrough of how writes, shard workers, and alias cutover behave 
 
 ## Supported OpenSearch Versions
 
-The build currently declares support for OpenSearch `2.15.0`, `2.17.0`, and `2.19.0`. Build the plugin with the exact target version:
+AOSC supports separate release lines for OpenSearch 2.x and 3.x:
+
+| OpenSearch line | Branch | Supported build versions | Java |
+| --- | --- | --- | --- |
+| 2.x | `releases/2.x` | `2.15.0`, `2.17.0`, `2.19.0` | 11 |
+| 3.x | `develop`, `releases/3.x` | `3.1.0`, `3.3.0`, `3.5.0`, `3.6.0` | 21 |
+
+Build the plugin with the exact target OpenSearch version. The current `develop` default is OpenSearch 3.x:
 
 ```bash
-./gradlew :aosc-plugin:assemble -Dopensearch.version=2.19.0
+./gradlew :aosc-plugin:assemble -Dopensearch.version=3.6.0
 ```
 
 The generated plugin descriptor uses a patch-compatible semver range for the selected minor version. See [Install the Plugin](docs/how-to/install-the-plugin.md) for details.
 
-The AOSC project version is tracked in `version.properties`. Release branches use that file as the authoritative release version; `develop` uses a non-release development version. Release tags include both the AOSC version and the OpenSearch major compatibility line, for example `aosc-0.1.0-os2`. See [Releases](docs/contributing/releases.md).
+The AOSC project version is tracked in `version.properties`. Release branches use that file as the authoritative release version; `develop` uses a non-release development version. Release tags include both the AOSC version and the OpenSearch major compatibility line, for example `aosc-0.1.0-os2` and `aosc-0.1.0-os3`. See [Releases](docs/contributing/releases.md).
 
 ## Quick Start
 
@@ -73,7 +80,7 @@ For architecture details, see [Architecture Overview](docs/concepts/architecture
 The root build requires `OPENSEARCH_VERSION` or `-Dopensearch.version`.
 
 ```bash
-export OPENSEARCH_VERSION=2.19.0
+export OPENSEARCH_VERSION=3.6.0
 
 ./gradlew :aosc-plugin:unitTest
 ./gradlew :aosc-plugin:fastCheck
@@ -100,9 +107,9 @@ The Docker test cluster lives under `aosc-plugin/opensearch-docker`. Prefer the 
 ```bash
 export OPENSEARCH_INITIAL_ADMIN_PASSWORD=Admin@123
 
-./gradlew :aosc-plugin:dockerUp -Dopensearch.version=2.19.0
+./gradlew :aosc-plugin:dockerUp -Dopensearch.version=3.6.0
 curl -s http://localhost:9200/_cluster/health | jq '.'
-./gradlew :aosc-plugin:dockerDown -Dopensearch.version=2.19.0
+./gradlew :aosc-plugin:dockerDown -Dopensearch.version=3.6.0
 ```
 
 ## Repository Layout
