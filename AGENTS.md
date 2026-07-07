@@ -6,15 +6,16 @@ read `README.md` and `CONTRIBUTING.md` first.
 
 ## OpenSearch API Compatibility
 
-AOSC `develop` builds BOTH OpenSearch lines from two modules: `aosc-plugin-os3`
-(3.x packages: `org.opensearch.transport.client.*`, `action.support.clustermanager.*`,
-Java 21) and `aosc-plugin-os2` (2.x packages: `org.opensearch.client.*`,
-`action.support.master.*`, Java 11). Supported versions per line live in
-`release/os2.properties` / `release/os3.properties`.
+AOSC `develop` builds BOTH OpenSearch lines from two per-line source trees:
+`aosc-plugin-os3` (3.x packages: `org.opensearch.transport.client.*`,
+`action.support.clustermanager.*`, Java 21) and `aosc-plugin-os2` (2.x packages:
+`org.opensearch.client.*`, `action.support.master.*`, Java 11). Supported versions
+per line live in `release/os2.properties` / `release/os3.properties`. The
+`-PopensearchVersion` value selects the line; tasks take no project prefix.
 
-There is no shared Java `core` module yet, so **any shared fix must be applied to
-BOTH `aosc-plugin-os2/src` and `aosc-plugin-os3/src`** (keeping each module's
-version-specific imports) until a `core` module is extracted.
+There is no shared Java `core` yet, so **any shared fix must be applied to
+BOTH `aosc-plugin-os2/src` and `aosc-plugin-os3/src`** (keeping each line's
+version-specific imports) until a shared `core` is extracted.
 
 Common 3.x imports:
 
@@ -96,8 +97,8 @@ Use project utilities that schedule through the OpenSearch `ThreadPool`.
 Use targeted validation while developing:
 
 ```bash
-# The -P version selects the module, so no module prefix is needed (set the version per
-# invocation or once in ~/.gradle/gradle.properties).
+# The -P version selects the OpenSearch line, so no project prefix is needed (set the version
+# per invocation or once in ~/.gradle/gradle.properties).
 ./gradlew fastCheck -PopensearchVersion=3.6.0
 ./gradlew yamlRestTest -PopensearchVersion=3.6.0
 ./gradlew itTest -PopensearchVersion=3.6.0
