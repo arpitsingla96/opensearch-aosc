@@ -16,32 +16,32 @@ Patch releases within the same minor may be compatible because the plugin descri
 ```bash
 git clone https://github.com/atlassian-labs/opensearch-aosc.git
 cd opensearch-aosc
-./gradlew :aosc-plugin:assemble -Dopensearch.version=3.6.0
+./gradlew assemble -PopensearchVersion=3.6.0
 ```
 
-Output:
+The build prints the ZIP path when it finishes:
 
 ```text
-aosc-plugin/build/distributions/opensearch-aosc-<version>.zip
+.../build/distributions/opensearch-aosc-<version>.zip
 ```
 
-Repeat the build command with a different `-Dopensearch.version=...` when you need a ZIP for another supported OpenSearch minor.
+Repeat the build command with a different `-PopensearchVersion=...` when you need a ZIP for another supported OpenSearch minor.
 
 ## Install from GitHub Release
 
-Published releases attach one ZIP per supported OpenSearch minor:
+Each AOSC version is a single GitHub release tagged `v<aosc-version>`. That release attaches one ZIP per supported OpenSearch minor, across both lines:
 
 ```text
-opensearch-aosc-<aosc-version>-opensearch-<opensearch-minor>.zip
+opensearch-aosc-<aosc-version>-os<opensearch-minor>.zip
 ```
 
-For example, an AOSC `0.1.0` release for OpenSearch `3.6.x` uses:
+For example, the `v0.1.0` release includes a ZIP for OpenSearch `3.6.x`:
 
 ```text
-opensearch-aosc-0.1.0-opensearch-3.6.zip
+opensearch-aosc-0.1.0-os3.6.zip
 ```
 
-Download the ZIP matching your OpenSearch minor, verify it against `SHA256SUMS`, then install that ZIP on each node.
+Open the `v<aosc-version>` release, download the ZIP matching your OpenSearch minor, verify it against the release's `SHA256SUMS`, then install that ZIP on each node.
 
 ## Install on Each Node
 
@@ -73,6 +73,6 @@ A cluster with no migrations returns an empty `migrations` array.
 | Symptom | Check |
 |---------|-------|
 | Plugin version mismatch | Run `_cat/plugins` on all nodes and reinstall the same ZIP everywhere. |
-| `opensearch.version` build error | Pass `-Dopensearch.version=...` or export `OPENSEARCH_VERSION`. |
+| `opensearchVersion is required` build error | Pass `-PopensearchVersion=...` or set it in `~/.gradle/gradle.properties`. |
 | Plugin does not load | Check OpenSearch logs for version mismatch, permissions, or dependency errors. |
 | REST action missing | Confirm every relevant node has the plugin installed and was restarted. |
