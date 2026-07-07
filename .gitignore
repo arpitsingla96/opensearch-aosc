@@ -29,6 +29,9 @@ nbactions.xml
 build/
 bin/
 
+# release-build staging dir (assembled by the publish workflow, never committed)
+/dist/
+
 # vscode stuff
 .vscode/
 
