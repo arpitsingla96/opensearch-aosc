@@ -1,4 +1,6 @@
-import org.opensearch.gradle.test.RestIntegTestTask
+// NOTE: this is applied via `apply from:` by each os module. Do not use a top-level
+// `import` for build-tools types — the applied script is compiled without the buildscript
+// classpath. Reference such types by fully-qualified name inline (resolved at runtime).
 
 apply plugin: 'java'
 apply plugin: 'idea'
@@ -8,14 +10,6 @@ apply plugin: 'com.diffplug.spotless'
 apply plugin: 'opensearch.yaml-rest-test'
 apply plugin: 'opensearch.pluginzip'
 
-// OpenSearch 3.x runs tests under a Java agent (org.opensearch.javaagent.*) that
-// must be attached to every test JVM via -javaagent; the 'opensearch.java-agent'
-// plugin wires that in. The plugin ships only with 3.x build-tools, so it is
-// applied only for 3.x targets.
-if ((opensearch_version.split('\\.')[0] as int) >= 3) {
-    apply plugin: 'opensearch.java-agent'
-}
-
 def pluginName = 'opensearch-aosc'
 def pluginDescription = 'OpenSearch AOSC'
 def packagePath = 'com.atlassian'
@@ -23,15 +17,31 @@ def pathToPlugin = 'opensearch.aosc'
 def pluginClassName = 'AoscPlugin'
 group = "Atlassian"
 
-// Select source/target Java compatibility from the target OpenSearch major
-// version (3.x → Java 21, otherwise Java 11).
-def osMajor = opensearch_version.split('\\.')[0] as int
-def javaCompat = osMajor >= 3 ? JavaVersion.VERSION_21 : JavaVersion.VERSION_11
+// ---------------------------------------------------------------------------
+// Version + line-specific build data are resolved ONCE in settings.gradle (the single
+// source: it reads the -P property, derives major/minor, and loads+validates
+// release/os<major>.properties) and shared here via gradle.ext — no re-reading.
+// ---------------------------------------------------------------------------
+def osMajor = gradle.ext.aoscOsMajor as int
+def osMinor = gradle.ext.aoscOsMinor
+def lineProps = gradle.ext.aoscLineProps
 
+// 3.x runs tests under a Java agent (opensearch.java-agent), which ships only with
+// 3.x build-tools; the manifest's java_agent flag gates it per line.
+if (lineProps.getProperty('java_agent') == 'true') {
+    apply plugin: 'opensearch.java-agent'
+}
+
+def javaCompat = JavaVersion.toVersion(lineProps.getProperty('java_version'))
 java {
     targetCompatibility = javaCompat
     sourceCompatibility = javaCompat
 }
+
+// This script is applied via `apply from:`, so it is compiled without the buildscript
+// classpath and cannot `import` build-tools types. Resolve RestIntegTestTask via the
+// project's buildscript classloader (which has build-tools) and use it in task `type:`.
+def restIntegTestTaskClass = project.buildscript.classLoader.loadClass('org.opensearch.gradle.test.RestIntegTestTask')
 
 // ---------------------------------------------------------------------------
 // Delombok: generate plain-Java sources so javadoc can resolve Lombok types
@@ -108,44 +118,17 @@ loggerUsageCheck.enabled = false
 // No need to validate pom, as we do not upload to maven/sonatype
 validateNebulaPom.enabled = false
 
-// Supported OpenSearch versions — single source of truth for multi-version builds.
+// Jackson versions must match the ones shipped by the target OpenSearch minor, or
+// bundled Jackson causes NoSuchMethodError at runtime. They come from the manifest
+// (keyed by minor; databind and annotations tracked separately because some minors
+// ship a different patch for each, e.g. 3.5 ships databind 2.20.1 but annotations 2.20).
 ext {
-    supported_os_versions = ['2.15.0', '2.17.0', '2.19.0', '3.1.0', '3.3.0', '3.5.0', '3.6.0']
-    primary_os_version = '2.19.0'
-
-    // Jackson versions shipped by each supported OpenSearch minor (B041).
-    // Mismatch causes NoSuchMethodError crashes at runtime.
-    // Keyed by minor version — patches within a minor ship the same Jackson.
-    // jackson-databind and jackson-annotations are tracked separately because
-    // some minors ship a different patch for each (e.g. OpenSearch 3.5 ships
-    // databind 2.20.1 but annotations 2.20; 3.6 ships 2.21.2 vs 2.21).
-    jackson_databind_version_map = [
-        '2.15': '2.17.1',
-        '2.17': '2.17.2',
-        '2.19': '2.18.2',
-        '3.1': '2.18.2',
-        '3.3': '2.18.2',
-        '3.5': '2.20.1',
-        '3.6': '2.21.2',
-    ]
-    jackson_annotations_version_map = [
-        '2.15': '2.17.1',
-        '2.17': '2.17.2',
-        '2.19': '2.18.2',
-        '3.1': '2.18.2',
-        '3.3': '2.18.2',
-        '3.5': '2.20',
-        '3.6': '2.21',
-    ]
-
-    def osMinor = opensearch_version.split('\\.')[0..1].join('.')
-    resolvedJacksonDatabindVersion = jackson_databind_version_map[osMinor]
-    resolvedJacksonAnnotationsVersion = jackson_annotations_version_map[osMinor]
-    if (resolvedJacksonDatabindVersion == null || resolvedJacksonAnnotationsVersion == null) throw new GradleException(
-        "No jackson version for OpenSearch ${opensearch_version} (minor ${osMinor}). " +
-        "Add the minor version key to jackson_databind_version_map and " +
-        "jackson_annotations_version_map in build.gradle.")
+    resolvedJacksonDatabindVersion = lineProps.getProperty("jackson_databind.${osMinor}")
+    resolvedJacksonAnnotationsVersion = lineProps.getProperty("jackson_annotations.${osMinor}")
 }
+if (resolvedJacksonDatabindVersion == null || resolvedJacksonAnnotationsVersion == null) throw new GradleException(
+    "No jackson version for OpenSearch ${opensearch_version} (minor ${osMinor}) in release/os${osMajor}.properties. " +
+    "Add jackson_databind.${osMinor} and jackson_annotations.${osMinor}.")
 
 repositories {
     mavenLocal()
@@ -193,24 +176,13 @@ tasks.named('dependencyLicenses').configure {
 }
 
 // ---------------------------------------------------------------------------
-// YAML REST tests resolve org.opensearch.test:framework, which can expose
-// OpenSearch patch-specific metadata conflicts under failOnVersionConflict().
-def openSearchYamlRestDependencyOverrides = [
-    '2.19.5': [
-        'com.google.errorprone:error_prone_annotations': '2.45.0',
-    ],
-    '3.5.0': [
-        'com.google.errorprone:error_prone_annotations': '2.45.0',
-    ],
-    '3.6.0': [
-        'com.google.errorprone:error_prone_annotations': '2.45.0',
-    ],
-]
-
-def yamlRestDependencyOverrides = openSearchYamlRestDependencyOverrides[opensearch_version] ?: [:]
+// YAML REST tests resolve org.opensearch.test:framework, which can expose a
+// transitive error_prone_annotations conflict under failOnVersionConflict().
+// The pinned version (if any) for this exact OpenSearch version comes from the manifest.
+def errorProneOverride = lineProps.getProperty("error_prone.${opensearch_version}")
 configurations.matching { it.name.startsWith('yamlRestTest') }.configureEach {
-    if (!yamlRestDependencyOverrides.isEmpty()) {
-        resolutionStrategy.force yamlRestDependencyOverrides.collect { module, version -> "${module}:${version}" }
+    if (errorProneOverride) {
+        resolutionStrategy.force "com.google.errorprone:error_prone_annotations:${errorProneOverride}"
     }
 }
 
@@ -305,19 +277,6 @@ tasks.named('compileItTestJava').configure {
     options.compilerArgs.addAll(['-processor', 'lombok.launch.AnnotationProcessorHider$AnnotationProcessor'])
 }
 
-// Alias: ./gradlew unitTest
-task unitTest(type: Test) {
-    description = 'Run unit tests only (no integration tests). Fast iteration loop (~10s).'
-    group = 'verification'
-
-    testClassesDirs = sourceSets.test.output.classesDirs
-    classpath = sourceSets.test.runtimeClasspath
-
-    include '**/*Tests.class'
-
-    jvmArgs '-Xmx512m', '-Xms256m'
-}
-
 // Integration tests — spins up OpenSearch clusters, runs in ~1min.
 // Usage: ./gradlew itTest
 task itTest(type: Test) {
@@ -337,13 +296,13 @@ task itTest(type: Test) {
     }
 }
 
-// Fast check: compile + unit tests + precommit (no IT, no integTest, no yamlRestTest).
+// Fast check: compile + unit tests + precommit (no IT, no yamlRestTest).
 // This is the primary iteration loop task — runs in ~15s.
 // Usage: ./gradlew fastCheck
 task fastCheck {
     description = 'Compile + unit tests + precommit. No integration tests. (~15s)'
     group = 'verification'
-    dependsOn unitTest, precommit
+    dependsOn test, precommit
 }
 
 // Compile-only check: just verify the code compiles. (~2s)
@@ -354,25 +313,25 @@ task compileCheck {
     dependsOn 'compileJava', 'compileTestJava', 'compileItTestJava', 'compileSmokeTestJava', 'compileBenchmarkTestJava', 'compileScaleTestJava'
 }
 
-task integTest(type: RestIntegTestTask) {
-    description = "Run REST integration tests against a cluster (invoked separately, not part of check)"
+// integTest registers the testClusters.integTest cluster that `./gradlew run` launches (a local
+// dev cluster with the plugin installed). Not part of `check` and not run in CI.
+task integTest(type: restIntegTestTaskClass) {
+    description = "REST integration tests against a cluster; also backs ./gradlew run"
     testClassesDirs = sourceSets.test.output.classesDirs
     classpath = sourceSets.test.runtimeClasspath
-}
-
-// Neither integTest, itTest, nor smokeTest are wired into `check` — they are invoked separately.
-// ./gradlew check                                    → unit tests + precommit (fast)
-// ./gradlew yamlRestTest                             → YAML REST smoke tests
-// ./gradlew itTest                                   → in-JVM cluster integration tests
-// ./gradlew smokeTest [-Dcluster.topology=2n|cm|docker]  → REST smoke tests (default: 2n)
-// ./gradlew benchmark [-Dcluster.topology=2n|cm|docker]  → performance benchmarks (default: 2n)
-// ./gradlew scaleTest [-Dcluster.topology=2n|cm|docker]  → scale validation tests (default: 2n)
-
-integTest {
     if (System.getProperty("test.debug") != null) {
         jvmArgs '-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005'
     }
 }
+
+// Test suites below are invoked separately (not wired into `check`). The version selector picks
+// the module, so no module prefix is needed — e.g. `./gradlew itTest -PopensearchVersion=3.6.0`:
+// ./gradlew check                                        → unit tests + precommit (fast)
+// ./gradlew yamlRestTest                                 → YAML REST smoke tests (load-on-node)
+// ./gradlew itTest                                       → in-JVM cluster integration tests
+// ./gradlew smokeTest [-Dcluster.topology=2n|cm|docker]  → REST smoke tests (default: 2n)
+// ./gradlew benchmark [-Dcluster.topology=2n|cm|docker]  → performance benchmarks (default: 2n)
+// ./gradlew scaleTest [-Dcluster.topology=2n|cm|docker]  → scale validation tests (default: 2n)
 
 // ---------------------------------------------------------------------------
 // smokeTest source set: src/smokeTest — REST-level smoke tests using testClusters
@@ -415,7 +374,7 @@ def configureSmokeTask = { task ->
 }
 
 // Profile 1: 2 co-located nodes (fast, default)
-task smokeTest2Nodes(type: RestIntegTestTask) {
+task smokeTest2Nodes(type: restIntegTestTaskClass) {
     description = 'Run REST smoke tests against a 2-node co-located cluster. (~30s)'
     configureSmokeTask(it)
 }
@@ -427,7 +386,7 @@ testClusters.smokeTest2Nodes {
 }
 
 // Profile 2: 1 dedicated cluster-manager + 2 data-only nodes (realistic)
-task smokeTestDedicatedCM(type: RestIntegTestTask) {
+task smokeTestDedicatedCM(type: restIntegTestTaskClass) {
     description = 'Run REST smoke tests against a 3-node cluster with dedicated cluster-manager. (~45s)'
     configureSmokeTask(it)
 }
@@ -503,7 +462,7 @@ def configureBenchmarkTask = { task ->
     }
 }
 
-task benchmark2Nodes(type: RestIntegTestTask) {
+task benchmark2Nodes(type: restIntegTestTaskClass) {
     description = 'Run AOSC benchmark on 2 co-located nodes'
     configureBenchmarkTask(it)
 }
@@ -515,7 +474,7 @@ testClusters.benchmark2Nodes {
     jvmArgs '-Xmx2g', '-Xms2g'
 }
 
-task benchmarkDedicatedCM(type: RestIntegTestTask) {
+task benchmarkDedicatedCM(type: restIntegTestTaskClass) {
     description = 'Run AOSC benchmark on 3 nodes (1 dedicated CM + 2 data)'
     configureBenchmarkTask(it)
 }
@@ -601,7 +560,7 @@ def configureScaleTask = { task ->
     }
 }
 
-task scaleTest2Nodes(type: RestIntegTestTask) {
+task scaleTest2Nodes(type: restIntegTestTaskClass) {
     description = 'Run scale validation tests on 2 co-located nodes'
     configureScaleTask(it)
 }
@@ -613,7 +572,7 @@ testClusters.scaleTest2Nodes {
     jvmArgs '-Xmx2g', '-Xms2g'
 }
 
-task scaleTestDedicatedCM(type: RestIntegTestTask) {
+task scaleTestDedicatedCM(type: restIntegTestTaskClass) {
     description = 'Run scale validation tests on 3 nodes (1 dedicated CM + 2 data)'
     configureScaleTask(it)
 }
@@ -774,15 +733,4 @@ task dockerDown(type: Exec) {
     workingDir 'opensearch-docker'
     environment dockerComposeEnv
     commandLine dockerComposeCmd + ['down', '-v']
-}
-
-// updateVersion: Task to auto update version to the next development iteration
-task updateVersion {
-    onlyIf { System.getProperty('newVersion') }
-    doLast {
-        ext.newVersion = System.getProperty('newVersion')
-        println "Setting version to ${newVersion}."
-         // String tokenization to support -SNAPSHOT
-        ant.replaceregexp(file:"${rootProject.projectDir}/build.gradle", match: '"opensearch.version", "\\d.*"', replace: '"opensearch.version", "' + newVersion.tokenize('-')[0] + '-SNAPSHOT"', flags:'g', byline:true)
-    }
 }
