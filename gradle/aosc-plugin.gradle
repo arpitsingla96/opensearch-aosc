@@ -672,7 +672,9 @@ def externalPluginZip = findProperty('tests.docker.pluginZip')
 task dockerCopyPlugin(type: Copy) {
     description = 'Copy plugin zip to opensearch-docker/ for Docker build'
     if (externalPluginZip) {
-        from externalPluginZip
+        // Resolve against the repo root (rootProject), not the module dir, so a repo-root-relative
+        // path like "dist/opensearch-aosc-<v>-os<minor>.zip" (and absolute paths) both work.
+        from rootProject.file(externalPluginZip)
     } else {
         dependsOn bundlePlugin
         from tasks.bundlePlugin.archiveFile
