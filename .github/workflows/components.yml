@@ -9,7 +9,7 @@ on:
         default: os3
         type: string
       tier:
-        description: Test tier — fast (fastCheck + yamlRestTest) or full (all suites)
+        description: Test tier — fast (boundary patches) or full (every patch); both run all suites
         required: false
         default: full
         type: string

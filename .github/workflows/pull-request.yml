@@ -20,12 +20,11 @@ concurrency:
 jobs:
   validation:
     name: Run full CI
-    # PRs validate both lines at the fast tier = min+max patch of each minor (boundary patches,
-    # all suites). Develop-push and release run full = every patch. See scripts/ci-metadata.py.
+    # PRs validate both lines at the full tier, matching develop-push and release.
     uses: ./.github/workflows/components.yml
     with:
       os_line: all
-      tier: fast
+      tier: full
       include_docs: true
       artifact_retention_days: 7
 

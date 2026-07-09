@@ -3,7 +3,7 @@
 
 Reads version.properties (aoscVersion) and release/os<major>.properties. Modes:
   --github-output       : key=value for $GITHUB_OUTPUT (per-line meta + validation matrix)
-  --validation-matrix   : validation matrix JSON (selected versions x all suites)
+  --validation-matrix   : validation matrix JSON (selected OpenSearch versions x all suites)
   --build-matrix        : release build matrix JSON (build_versions x bundlePlugin)
   --release-compat-matrix : shipped-zip-per-minor x boundary-patch docker-smoke JSON
   --next-version <bump> : next X.Y.Z from git tags (patch|minor|major); line-independent
@@ -11,9 +11,8 @@ Reads version.properties (aoscVersion) and release/os<major>.properties. Modes:
   --summary             : human-readable
   --shell               : KEY=VALUE for bash `source` (single line; inspection)
 
-The selected OpenSearch version chooses the module (settings.gradle includes only the
-matching one), so gradle_task values are UNQUALIFIED (e.g. 'fastCheck', 'bundlePlugin')
-and are run with -PopensearchVersion=<version>.
+The selected OpenSearch version chooses the line, so gradle_task values are UNQUALIFIED
+(e.g. 'fastCheck', 'bundlePlugin') and are run with -PopensearchVersion=<version>.
 
 VALIDATION_TIER is a *version-selection* axis (all suites run in either tier):
   full : validate every patch in test_versions (comprehensive; develop-push + release).
@@ -149,7 +148,7 @@ def rows(line, versions, tasks):
             "opensearch_version": version,
             "target_java_version": meta["target_java_version"],
             "build_java_version": meta["build_java_version"],  # setup-java installs this (Gradle JVM)
-            "os_line": line,          # cosmetic (artifact naming); the version selects the module
+            "os_line": line,          # cosmetic (artifact naming); the version selects the line
             "id": id_,
             "label": label,
             "gradle_task": task,      # unqualified; run with -PopensearchVersion=<version>
